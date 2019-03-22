@@ -5,7 +5,6 @@ function main() {
     // setInterval(() => drawWithResize(canvas), 100)
 }
 function drawWithResize(canvas) {
-    // console.log(window.visualViewport.height);
     canvas.height = window.visualViewport.height;
     canvas.width = window.visualViewport.width;
     draw(canvas);
@@ -16,9 +15,7 @@ function draw(canvas) {
     const tr = absoluteCoordOffset(canvas, offset, offset, .5, .5);
     const xAxis = transformAll(tr, [{ x: 0, y: 0 }, { x: canvas.width, y: 0 }]);
     const yAxis = transformAll(tr, [{ x: 0, y: 0 }, { x: 0, y: canvas.height }]);
-    // console.log("PRINT Xaxis", canvas.width, canvas.height);
     drawAxis(cx, xAxis, "grey", 10, 10);
-    // console.log("PRINT Yaxis", canvas.width, canvas.height);
     drawAxis(cx, yAxis, "grey", 10, 10);
     const toTheCorner = transformAll(tr, [{ x: 0, y: 0 }, { x: canvas.width, y: canvas.height }]);
     drawLine(cx, toTheCorner, "magenta");
@@ -26,10 +23,30 @@ function draw(canvas) {
     drawLine(cx, data, "blue");
     const moarData = transformAll(tr, [{ x: 0, y: 0 }, { x: 100, y: 100 }, { x: 200, y: 200 }, { x: 300, y: 300 }]);
     drawLine(cx, moarData, "red");
-    const sine = transformAll(tr, genSine({ x: 0, y: 40 }, canvas.width, 100, 50, 20));
-    console.log(sine);
+    const sine = transformAll(tr, genFn(Math.sin, { x: 0, y: 40 }, canvas.width, 100, 50, 20));
     drawLine(cx, sine, "green");
-    // drawLine(cx, sine, "green");
+    const cos = transformAll(tr, genFn(Math.cos, { x: 0, y: 40 }, canvas.width, 100, 50, 20));
+    drawLine(cx, cos, "green");
+    const tan = transformAll(tr, genFn(Math.tan, { x: 0, y: 40 }, canvas.width, 100, 50, 20));
+    drawLine(cx, tan, "green");
+    const sahir = transformAll(tr, genFn(sahirFn, { x: 0, y: 40 }, canvas.width, 100, 50, 1));
+    drawLine(cx, sahir, "green");
+    const natLog = transformAll(tr, genFn(naturalLog, { x: 0, y: 40 }, canvas.width, 100, 50, 1));
+    drawLine(cx, natLog, "green");
+}
+function naturalLog(x) {
+    return Math.log(x);
+}
+function sahirFn(x) {
+    return Math.pow(Math.atan(x), 1 / 3);
+}
+function genFn(fn, start, end, amplitude, frequency, step) {
+    const yOfX = [];
+    for (; start.x < end; start.x += step) {
+        yOfX.push({ x: start.x,
+            y: fn(start.x / frequency) * amplitude + start.y });
+    }
+    return yOfX;
 }
 function genSine(start, end, amplitude, frequency, step) {
     const sine = [];
@@ -52,17 +69,13 @@ function drawLine(cx, coords, color) {
     cx.stroke();
 }
 function drawAxis(cx, coord, color, tickTotal, tickLength) {
-    // console.log("INPUTS: ", coord, tickTotal, tickLength);
     drawLine(cx, coord, "grey");
     const hyp = hypotenuse(coord[0], coord[1]);
     const angle = angleOfVector(coord[0], coord[1]);
     const isVertical = approxEqual(angle, -1.5707963267948966);
-    // console.log("HYP", hyp, "ANGLE", angle, "VERTICAL?", isVertical);
     const tickSpace = endOfVector({ x: 0, y: 0 }, angle, (hyp / tickTotal));
     const base = { x: coord[0].x, y: coord[0].y };
-    // console.log("TICKSPACE", tickSpace, "BASE", base);
     for (let i = 0; i < tickTotal; i++) {
-        // console.log(base);
         base.x += isVertical ? 0 : tickSpace.x;
         base.y += isVertical ? tickSpace.y : 0;
         const start = { x: base.x, y: base.y };
@@ -75,7 +88,6 @@ function drawAxis(cx, coord, color, tickTotal, tickLength) {
             start.y -= tickLength / 2;
             end.y += tickLength / 2;
         }
-        // console.log(isVertical, start, end);
         drawLine(cx, [start, end], "black");
     }
 }
