@@ -19,7 +19,7 @@ function main(): void {
   const singlePoint = {x: 100, y: 100};
   g.drawPoint(singlePoint, 5, "red");
   
-  const sine = g.genFn(Math.sin, {x: 0, y: 40}, canvas.width, 100, 50, 15));
+  const sine = g.genFn(Math.sin, {x: 0, y: 40}, canvas.width, 100, 50, 15);
   g.drawPoints(sine, 2, "blue");
   g.drawLine(sine, "blue");
 
