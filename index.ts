@@ -14,7 +14,7 @@ function main(): void {
 }
 
 function drawWithResize(canvas) {
-  console.log(window.visualViewport.height);
+  // console.log(window.visualViewport.height);
   canvas.height = window.visualViewport.height;
   canvas.width = window.visualViewport.width;
   draw(canvas);
@@ -27,18 +27,40 @@ function draw(canvas): void {
   const tr = absoluteCoordOffset(canvas, offset, offset, .5, .5);
   const xAxis = transformAll(tr, [{x: 0, y: 0}, {x: canvas.width, y: 0}]);
   const yAxis = transformAll(tr, [{x: 0, y: 0}, {x: 0, y: canvas.height}]);
-  console.log("PRINT Xaxis", canvas.width, canvas.height);
+  // console.log("PRINT Xaxis", canvas.width, canvas.height);
   drawAxis(cx, xAxis, "grey", 10, 10);
-  console.log("PRINT Yaxis", canvas.width, canvas.height);
+  // console.log("PRINT Yaxis", canvas.width, canvas.height);
   drawAxis(cx, yAxis, "grey", 10, 10);
+
+  const toTheCorner = transformAll(tr, [{x: 0, y: 0}, {x: canvas.width, y: canvas.height}]);
+  drawLine(cx, toTheCorner, "magenta")
 
   const data = transformAll(tr, [{x: 0, y: 0}, {x: 100, y: 10}, {x: 200, y: 20}, {x: 300, y: 30}]);
   drawLine(cx, data, "blue");
 
   const moarData = transformAll(tr, [{x: 0, y: 0}, {x: 100, y: 100}, {x: 200, y: 200}, {x: 300, y: 300}]);
   drawLine(cx, moarData, "red");
+
+  const sine = transformAll(tr, genSine({x: 0, y: 40}, canvas.width, 100, 50, 20));
+  console.log(sine);
+  drawLine(cx, sine, "green");
+  // drawLine(cx, sine, "green");
 }
 
+function genSine(
+    start: Coordinate, 
+    end: number, 
+    amplitude: number, 
+    frequency: number, 
+    step: number): Coordinate[] {
+  const sine: Coordinate[] = [];
+  for (; start.x < end; start.x += step) {
+    sine.push(
+      {x: start.x, 
+       y: Math.sin(start.x / frequency) * amplitude + start.y});
+  }
+  return sine;
+}
 
 function transformAll(
   transformFn: Function,
@@ -69,19 +91,19 @@ function drawAxis(
   tickTotal: number,
   tickLength: number
 ): void {
-  console.log("INPUTS: ", coord, tickTotal, tickLength);
+  // console.log("INPUTS: ", coord, tickTotal, tickLength);
   drawLine(cx, coord, "grey");
   
   const hyp = hypotenuse(coord[0], coord[1]);
   const angle = angleOfVector(coord[0], coord[1]);
 
   const isVertical = approxEqual(angle, -1.5707963267948966);
-  console.log("HYP", hyp, "ANGLE", angle, "VERTICAL?", isVertical);
+  // console.log("HYP", hyp, "ANGLE", angle, "VERTICAL?", isVertical);
   
   const tickSpace = endOfVector({x: 0, y: 0}, angle, (hyp / tickTotal));
   
   const base = {x: coord[0].x, y: coord[0].y};
-  console.log("TICKSPACE", tickSpace, "BASE", base);
+  // console.log("TICKSPACE", tickSpace, "BASE", base);
   for (let i = 0; i < tickTotal; i++) {
     // console.log(base);
     base.x += isVertical ? 0: tickSpace.x;
@@ -98,7 +120,7 @@ function drawAxis(
       end.y += tickLength / 2;
     }
 
-    console.log(isVertical, start, end);
+    // console.log(isVertical, start, end);
     drawLine(cx, [start, end], "black")
   }
 }
