@@ -61,6 +61,9 @@
 #Further Buildout
 * more graph types
 * refine documentation
+* ability to save image?
+* ability to pull from api: give url and code needed to extract the relevant information and it will,
+on load, pull the data down and display it.
 
 #Graphits changes
 * rename offset to padding, ensure values match the rest of the page

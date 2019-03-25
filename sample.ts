@@ -46,6 +46,6 @@ g.graph({
 
 g.graphFunction(Math.sin);
 // g.raphFunction(Math.sin);
-// g.function(Math.sin);
+g.function(Math.sin);
 g.graphFunction((x) => Math.sin(x) * 100 + 50);
-
+g.graphFromAPI(url, fn);
